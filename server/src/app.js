@@ -3,6 +3,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const authRoutes = require("./modules/auth/auth.routes");
+const protectedRoutes = require("./routes/protected.routes");
 
 const healthRoutes = require("./routes/health.routes");
 
@@ -15,5 +16,5 @@ app.use(morgan("dev"));
 
 app.use("/api/health", healthRoutes);
 app.use("/api/auth", authRoutes);
-
+app.use("/api/protected", protectedRoutes);
 module.exports = app;
