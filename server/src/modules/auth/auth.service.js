@@ -1,6 +1,7 @@
 const User = require("../../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const Student = require("../../models/Student");
 
 // Service function to sign up a new user
 const signupUser = async ({ name, email, password, role }) => {
@@ -13,21 +14,28 @@ const signupUser = async ({ name, email, password, role }) => {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   const user = await User.create({
-    name,
-    email,
-    password: hashedPassword,
-    role,
+  name,
+  email,
+  password: hashedPassword,
+  role,
+});
+
+// Auto create student profile
+if (role === "student") {
+  await Student.create({
+    userId: user._id,
   });
+}
 
-  const userResponse = {
-    _id: user._id,
-    name: user.name,
-    email: user.email,
-    role: user.role,
-    createdAt: user.createdAt,
-    };
+const userResponse = {
+  _id: user._id,
+  name: user.name,
+  email: user.email,
+  role: user.role,
+  createdAt: user.createdAt,
+};
 
-    return userResponse;
+return userResponse;
 };
 
 
