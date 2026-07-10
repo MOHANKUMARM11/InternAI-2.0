@@ -3,12 +3,19 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const Student = require("../../models/Student");
 
+const ApiError = require("../../utils/ApiError");
+const STATUS_CODES = require("../../constants/statusCodes");
+const MESSAGES = require("../../constants/messages");
+
 // Service function to sign up a new user
 const signupUser = async ({ name, email, password, role }) => {
   const existingUser = await User.findOne({ email });
 
   if (existingUser) {
-    throw new Error("User already exists");
+    throw new ApiError(
+      STATUS_CODES.CONFLICT,
+      MESSAGES.USER_EXISTS
+    );
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -45,7 +52,10 @@ const loginUser = async ({ email, password }) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    throw new Error("Invalid email or password");
+    throw new ApiError(
+      STATUS_CODES.UNAUTHORIZED,
+      MESSAGES.INVALID_CREDENTIALS
+    );
   }
 
   const isPasswordMatch = await bcrypt.compare(
@@ -54,7 +64,10 @@ const loginUser = async ({ email, password }) => {
   );
 
   if (!isPasswordMatch) {
-    throw new Error("Invalid email or password");
+    throw new Error("Invalid email or password");throw new ApiError(
+      STATUS_CODES.UNAUTHORIZED,
+      MESSAGES.INVALID_CREDENTIALS
+    );
   }
 
   const token = jwt.sign(

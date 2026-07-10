@@ -3,55 +3,38 @@ const {
   updateMyProfile,
 } = require("./student.service");
 
-const getProfile = async (req, res) => {
-  try {
-    const student = await getMyProfile(req.user._id);
+const catchAsync = require("../../utils/catchAsync");
+const { successResponse } = require("../../utils/apiResponse");
 
-    if (!student) {
-      return res.status(404).json({
-        success: false,
-        message: "Student profile not found",
-      });
-    }
+const STATUS_CODES = require("../../constants/statusCodes");
+const MESSAGES = require("../../constants/messages");
 
-    res.status(200).json({
-      success: true,
-      student,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
+// Get Student Profile
+const getProfile = catchAsync(async (req, res) => {
+  const student = await getMyProfile(req.user._id);
 
-const updateProfile = async (req, res) => {
-  try {
-    const student = await updateMyProfile(
-      req.user._id,
-      req.body
-    );
+  return successResponse(
+    res,
+    STATUS_CODES.OK,
+    "Student profile fetched successfully",
+    student
+  );
+});
 
-    if (!student) {
-      return res.status(404).json({
-        success: false,
-        message: "Student profile not found",
-      });
-    }
+// Update Student Profile
+const updateProfile = catchAsync(async (req, res) => {
+  const student = await updateMyProfile(
+    req.user._id,
+    req.body
+  );
 
-    res.status(200).json({
-      success: true,
-      message: "Profile updated successfully",
-      student,
-    });
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
+  return successResponse(
+    res,
+    STATUS_CODES.OK,
+    MESSAGES.PROFILE_UPDATED,
+    student
+  );
+});
 
 module.exports = {
   getProfile,

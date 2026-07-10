@@ -1,14 +1,27 @@
 const Student = require("../../models/Student");
 
+const ApiError = require("../../utils/ApiError");
+const STATUS_CODES = require("../../constants/statusCodes");
+const MESSAGES = require("../../constants/messages");
+
 const getMyProfile = async (userId) => {
-  return await Student.findOne({ userId }).populate(
+  const student = await Student.findOne({ userId }).populate(
     "userId",
     "name email role"
   );
+
+  if (!student) {
+    throw new ApiError(
+      STATUS_CODES.NOT_FOUND,
+      MESSAGES.PROFILE_NOT_FOUND
+    );
+  }
+
+  return student;
 };
 
 const updateMyProfile = async (userId, data) => {
-  return await Student.findOneAndUpdate(
+  const student = await Student.findOneAndUpdate(
     { userId },
     data,
     {
@@ -16,6 +29,15 @@ const updateMyProfile = async (userId, data) => {
       runValidators: true,
     }
   ).populate("userId", "name email role");
+
+  if (!student) {
+    throw new ApiError(
+      STATUS_CODES.NOT_FOUND,
+      MESSAGES.PROFILE_NOT_FOUND
+    );
+  }
+
+  return student;
 };
 
 module.exports = {

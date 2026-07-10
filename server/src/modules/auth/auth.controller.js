@@ -2,51 +2,36 @@ const { signupUser, loginUser } = require("./auth.service");
 
 const {
   successResponse,
-  errorResponse,
 } = require("../../utils/apiResponse");
+
+const catchAsync = require("../../utils/catchAsync");
 
 const STATUS_CODES = require("../../constants/statusCodes");
 const MESSAGES = require("../../constants/messages");
 
-// Signup Controller
-const signup = async (req, res) => {
-  try {
-    const user = await signupUser(req.body);
+// Signup
+const signup = catchAsync(async (req, res) => {
+  const user = await signupUser(req.body);
 
-    return successResponse(
-      res,
-      STATUS_CODES.CREATED,
-      MESSAGES.USER_REGISTERED,
-      user
-    );
-  } catch (error) {
-    return errorResponse(
-      res,
-      STATUS_CODES.BAD_REQUEST,
-      error.message
-    );
-  }
-};
+  return successResponse(
+    res,
+    STATUS_CODES.CREATED,
+    MESSAGES.USER_REGISTERED,
+    user
+  );
+});
 
-// Login Controller
-const login = async (req, res) => {
-  try {
-    const data = await loginUser(req.body);
+// Login
+const login = catchAsync(async (req, res) => {
+  const data = await loginUser(req.body);
 
-    return successResponse(
-      res,
-      STATUS_CODES.OK,
-      MESSAGES.LOGIN_SUCCESS,
-      data
-    );
-  } catch (error) {
-    return errorResponse(
-      res,
-      STATUS_CODES.UNAUTHORIZED,
-      error.message
-    );
-  }
-};
+  return successResponse(
+    res,
+    STATUS_CODES.OK,
+    MESSAGES.LOGIN_SUCCESS,
+    data
+  );
+});
 
 module.exports = {
   signup,
