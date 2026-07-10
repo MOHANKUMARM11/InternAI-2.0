@@ -1,38 +1,50 @@
 const { signupUser, loginUser } = require("./auth.service");
 
-// Controller function to sign up a new user
+const {
+  successResponse,
+  errorResponse,
+} = require("../../utils/apiResponse");
+
+const STATUS_CODES = require("../../constants/statusCodes");
+const MESSAGES = require("../../constants/messages");
+
+// Signup Controller
 const signup = async (req, res) => {
   try {
     const user = await signupUser(req.body);
 
-    res.status(201).json({
-      success: true,
-      message: "User registered successfully",
-      user,
-    });
+    return successResponse(
+      res,
+      STATUS_CODES.CREATED,
+      MESSAGES.USER_REGISTERED,
+      user
+    );
   } catch (error) {
-    res.status(400).json({
-      success: false,
-      message: error.message,
-    });
+    return errorResponse(
+      res,
+      STATUS_CODES.BAD_REQUEST,
+      error.message
+    );
   }
 };
 
-// Controller function to log in a user
+// Login Controller
 const login = async (req, res) => {
   try {
     const data = await loginUser(req.body);
 
-    res.status(200).json({
-      success: true,
-      message: "Login successful",
-      ...data,
-    });
+    return successResponse(
+      res,
+      STATUS_CODES.OK,
+      MESSAGES.LOGIN_SUCCESS,
+      data
+    );
   } catch (error) {
-    res.status(401).json({
-      success: false,
-      message: error.message,
-    });
+    return errorResponse(
+      res,
+      STATUS_CODES.UNAUTHORIZED,
+      error.message
+    );
   }
 };
 
