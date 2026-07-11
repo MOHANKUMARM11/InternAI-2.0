@@ -15,6 +15,11 @@ const MESSAGES = {
   PROFILE_UPDATED: "Profile updated successfully",
   PROFILE_NOT_FOUND: "Student profile not found",
 
+  // Company
+  COMPANY_PROFILE_FETCHED: "Company profile fetched successfully",
+  COMPANY_PROFILE_UPDATED: "Company profile updated successfully",
+  COMPANY_PROFILE_NOT_FOUND: "Company profile not found",
+  
   // Common
   SERVER_ERROR: "Internal server error",
 };

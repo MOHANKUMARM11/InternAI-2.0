@@ -1,7 +1,9 @@
-const User = require("../../models/User");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+
+const User = require("../../models/User");
 const Student = require("../../models/Student");
+const Company = require("../../models/Company");
 
 const ApiError = require("../../utils/ApiError");
 const STATUS_CODES = require("../../constants/statusCodes");
@@ -30,6 +32,12 @@ const signupUser = async ({ name, email, password, role }) => {
 // Auto create student profile
 if (role === "student") {
   await Student.create({
+    userId: user._id,
+  });
+}
+
+if (role === "company") {
+  await Company.create({
     userId: user._id,
   });
 }
