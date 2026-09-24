@@ -5,6 +5,7 @@ import rateLimit from 'express-rate-limit'
 import { errorMiddleware } from './middlewares/error.middleware.js'
 
 import authRoutes from './modules/auth/auth.routes.js'
+import studentRoutes from './modules/student/student.routes.js'
 
 const app = express()
 
@@ -17,6 +18,7 @@ const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 })
 app.use('/api/', limiter)
 
 app.use('/api/auth', authRoutes)
+app.use('/api/students', studentRoutes)
 
 app.use(errorMiddleware)
 
