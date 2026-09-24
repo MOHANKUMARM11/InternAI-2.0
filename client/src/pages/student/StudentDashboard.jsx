@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { dashboardApi } from '../../api/dashboardApi'
 import { FileText, Code, Target, Briefcase, ChevronRight } from 'lucide-react'
+import MarketPulseWidget from '../../components/common/MarketPulseWidget'
 
 const StudentDashboard = () => {
   const [data, setData] = useState(null)
@@ -142,6 +143,9 @@ const StudentDashboard = () => {
           </div>
         </div>
       </div>
+      
+      {/* Market Pulse Full Width Widget */}
+      <MarketPulseWidget />
     </div>
   )
 }
