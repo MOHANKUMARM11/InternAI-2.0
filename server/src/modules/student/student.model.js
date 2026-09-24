@@ -38,6 +38,7 @@ const studentSchema = new mongoose.Schema({
   interviewScore: { type: Number, default: null },
   careerGoal:   String,
   preferredDomains: [String],
+  peerXp:       { type: Number, default: 0 },
   updatedAt:    { type: Date, default: Date.now }
 })
 

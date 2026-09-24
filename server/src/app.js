@@ -13,6 +13,7 @@ import dashboardRoutes from './modules/dashboard/dashboard.routes.js'
 import aiRoutes from './modules/ai/ai.routes.js'
 import githubRoutes from './modules/github/github.routes.js'
 import marketRoutes from './modules/market/market.routes.js'
+import peerRoutes from './modules/peer/peer.routes.js'
 
 const app = express()
 
@@ -33,6 +34,7 @@ app.use('/api/dashboard', dashboardRoutes)
 app.use('/api/ai', aiRoutes)
 app.use('/api/github', githubRoutes)
 app.use('/api/market', marketRoutes)
+app.use('/api/peer', peerRoutes)
 
 app.use(errorMiddleware)
 
