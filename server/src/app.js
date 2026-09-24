@@ -9,6 +9,7 @@ const rbacRoutes = require("./routes/rbac.routes");
 const studentRoutes = require("./modules/student/student.routes");
 const errorMiddleware = require("./middlewares/error.middleware");
 const companyRoutes = require("./modules/company/company.routes");
+const internshipRoutes = require("./modules/internship/internship.routes");
 
 const healthRoutes = require("./routes/health.routes");
 
@@ -25,6 +26,7 @@ app.use("/api/protected", protectedRoutes);
 app.use("/api/rbac", rbacRoutes);
 app.use("/api/students", studentRoutes);
 app.use("/api/company", companyRoutes);
+app.use("/api/internships", internshipRoutes);
 
 app.use(errorMiddleware);
 

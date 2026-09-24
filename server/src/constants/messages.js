@@ -20,6 +20,12 @@ const MESSAGES = {
   COMPANY_PROFILE_UPDATED: "Company profile updated successfully",
   COMPANY_PROFILE_NOT_FOUND: "Company profile not found",
   
+  // Internship
+  INTERNSHIP_CREATED: "Internship created successfully",
+  INTERNSHIP_NOT_FOUND: "Internship not found",
+  MY_INTERNSHIPS_FETCHED: "Company internships fetched successfully",
+  INTERNSHIPS_FETCHED: "Internships fetched successfully",
+
   // Common
   SERVER_ERROR: "Internal server error",
 };
