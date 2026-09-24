@@ -51,7 +51,7 @@ Return this exact JSON structure:
         ],
         missingKeywords: ["TypeScript", "Docker"],
         formattingIssues: [],
-        summary: "A strong full-stack developer profile. Needs more quantifiable achievements."
+        summary: "[MOCK DATA] A strong full-stack developer profile. Needs more quantifiable achievements."
       }
       student.resumeScore = mockResult.overallScore
       student.skills = [...new Set([...student.skills, ...(mockResult.extractedSkills || [])])]
@@ -61,7 +61,7 @@ Return this exact JSON structure:
     }
 
     const response = await claudeClient.messages.create({
-      model: 'claude-3-5-sonnet-20241022',
+      model: 'claude-sonnet-4-20250514',
       max_tokens: 1500,
       messages: [{ role: 'user', content: prompt }]
     })
