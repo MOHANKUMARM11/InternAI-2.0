@@ -1,6 +1,6 @@
 import { Student } from '../student/student.model.js'
 import { ApiError } from '../../utils/ApiError.js'
-import { claudeClient } from '../../utils/claudeClient.js'
+import { generateContent } from '../../utils/geminiClient.js'
 
 export const analyzeResume = async (userId) => {
   const student = await Student.findOne({ userId })
@@ -13,8 +13,6 @@ export const analyzeResume = async (userId) => {
   }
 
   const prompt = `
-You are an expert ATS resume analyzer and career coach.
-
 Analyze the following resume text and return a JSON object ONLY (no markdown, no explanation outside JSON).
 
 Resume:
@@ -37,8 +35,10 @@ Return this exact JSON structure:
 }
 `
 
+  const systemInstruction = 'You are an expert ATS resume analyzer and career coach.';
+
   try {
-    if (!process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_API_KEY === 'dummy_key_for_testing') {
+    if (!process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'dummy_key_for_testing') {
       // Mock response for testing without API key
       const mockResult = {
         overallScore: 85,
@@ -60,19 +60,11 @@ Return this exact JSON structure:
       return mockResult
     }
 
-    const response = await claudeClient.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1500,
-      messages: [{ role: 'user', content: prompt }]
+    const result = await generateContent(prompt, {
+      systemInstruction,
+      json: true,
+      retries: 1
     })
-
-    const raw = response.content[0].text
-    
-    // Attempt to extract JSON if Claude added markdown
-    const jsonMatch = raw.match(/\{.*\}/s)
-    if (!jsonMatch) throw new Error('No JSON found in response')
-    
-    const result = JSON.parse(jsonMatch[0])
 
     student.resumeScore = result.overallScore
     student.skills = [...new Set([...student.skills, ...(result.extractedSkills || [])])]
