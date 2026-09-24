@@ -6,6 +6,8 @@ import { ProtectedRoute } from './components/ProtectedRoute'
 import { useAuthStore } from './store/useAuthStore'
 import StudentDashboard from './pages/student/StudentDashboard'
 import Profile from './pages/student/Profile'
+import CompanyDashboard from './pages/company/CompanyDashboard'
+import CompanyProfile from './pages/company/CompanyProfile'
 
 const Dashboard = () => {
   const { user, logout } = useAuthStore()
@@ -37,6 +39,8 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/student/dashboard" element={<StudentDashboard />} />
           <Route path="/student/profile" element={<Profile />} />
+          <Route path="/company/dashboard" element={<CompanyDashboard />} />
+          <Route path="/company/profile" element={<CompanyProfile />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/login" replace />} />
