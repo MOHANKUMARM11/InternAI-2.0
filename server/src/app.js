@@ -10,6 +10,7 @@ import companyRoutes from './modules/company/company.routes.js'
 import internshipRoutes from './modules/internship/internship.routes.js'
 import applicationRoutes from './modules/application/application.routes.js'
 import dashboardRoutes from './modules/dashboard/dashboard.routes.js'
+import aiRoutes from './modules/ai/ai.routes.js'
 
 const app = express()
 
@@ -27,6 +28,7 @@ app.use('/api/companies', companyRoutes)
 app.use('/api/internships', internshipRoutes)
 app.use('/api/applications', applicationRoutes)
 app.use('/api/dashboard', dashboardRoutes)
+app.use('/api/ai', aiRoutes)
 
 app.use(errorMiddleware)
 

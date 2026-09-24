@@ -31,6 +31,7 @@ const studentSchema = new mongoose.Schema({
   resumeUrl:    String,
   resumeText:   String,
   resumeScore:  { type: Number, default: null },
+  resumeAnalysis: { type: Object, default: null },
   githubScore:  { type: Number, default: null },
   interviewScore: { type: Number, default: null },
   careerGoal:   String,
