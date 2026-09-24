@@ -1,13 +1,13 @@
 import { InterviewSession } from '../models/interviewSession.model.js'
 import { Student } from '../../student/student.model.js'
-import { claudeClient } from '../../../utils/claudeClient.js'
+import { generateContent } from '../../../utils/geminiClient.js'
 import { ApiError } from '../../../utils/ApiError.js'
 
 export const generateQuestions = async (userId, { domain, level }) => {
   const student = await Student.findOne({ userId })
   if (!student) throw new ApiError(404, 'Student not found')
 
-  const isMock = !process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_API_KEY === 'dummy_key_for_testing'
+  const isMock = !process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'dummy_key_for_testing'
   if (isMock) {
     const mockQuestions = Array(10).fill(0).map((_, i) => ({
       id: i + 1,
@@ -36,11 +36,7 @@ Return JSON ONLY:
 `
 
   try {
-    const response = await claudeClient.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1500,
-      messages: [{ role: 'user', content: prompt }]
-    })
+    const parsed = await generateContent(prompt, { json: true, retries: 1 })
 
     const raw = response.content[0].text
     const jsonMatch = raw.match(/\{.*\}/s)
@@ -52,7 +48,7 @@ Return JSON ONLY:
 }
 
 export const evaluateAnswer = async (userId, { question, answer, domain }) => {
-  const isMock = !process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_API_KEY === 'dummy_key_for_testing'
+  const isMock = !process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'dummy_key_for_testing'
   if (isMock) {
     return {
       score: 8,
@@ -80,11 +76,7 @@ Return JSON ONLY:
 }
 `
   try {
-    const response = await claudeClient.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 800,
-      messages: [{ role: 'user', content: prompt }]
-    })
+    const parsed = await generateContent(prompt, { json: true, retries: 1 })
     const raw = response.content[0].text
     const jsonMatch = raw.match(/\{.*\}/s)
     return JSON.parse(jsonMatch[0])

@@ -1,6 +1,6 @@
 import { Roadmap } from '../models/roadmap.model.js'
 import { Student } from '../../student/student.model.js'
-import { claudeClient } from '../../../utils/claudeClient.js'
+import { generateContent } from '../../../utils/geminiClient.js'
 import { ApiError } from '../../../utils/ApiError.js'
 
 export const generateRoadmap = async (userId, targetRole) => {
@@ -9,7 +9,7 @@ export const generateRoadmap = async (userId, targetRole) => {
 
   const allTechUsed = student.projects.flatMap(p => p.techStack)
 
-  const isMock = !process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_API_KEY === 'dummy_key_for_testing'
+  const isMock = !process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'dummy_key_for_testing'
   if (isMock) {
     const mockRoadmap = {
       gapSkills: ["[MOCK DATA] Advanced React", "GraphQL"],
@@ -56,11 +56,7 @@ Rules:
 `
 
   try {
-    const response = await claudeClient.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1500,
-      messages: [{ role: 'user', content: prompt }]
-    })
+    const parsed = await generateContent(prompt, { json: true, retries: 1 })
 
     const raw = response.content[0].text
     const jsonMatch = raw.match(/\{.*\}/s)

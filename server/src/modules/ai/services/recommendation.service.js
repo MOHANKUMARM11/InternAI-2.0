@@ -1,7 +1,7 @@
 import { Student } from '../../student/student.model.js'
 import { Internship } from '../../internship/internship.model.js'
 import { Application } from '../../application/application.model.js'
-import { claudeClient } from '../../../utils/claudeClient.js'
+import { generateContent } from '../../../utils/geminiClient.js'
 import { ApiError } from '../../../utils/ApiError.js'
 
 export const getRecommendations = async (userId) => {
@@ -25,7 +25,7 @@ export const getRecommendations = async (userId) => {
 
   if (available.length === 0) return []
 
-  const isMock = !process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_API_KEY === 'dummy_key_for_testing'
+  const isMock = !process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'dummy_key_for_testing'
 
   if (isMock) {
     const mockRecs = available.slice(0, 3).map(i => ({
@@ -74,16 +74,9 @@ Return a JSON array of the top 5 best matches ONLY:
 ]
 `
   try {
-    const response = await claudeClient.messages.create({
-      model: 'claude-sonnet-4-20250514',
-      max_tokens: 1000,
-      messages: [{ role: 'user', content: prompt }]
-    })
+    const parsed = await generateContent(prompt, { json: true, retries: 1 })
     
-    const raw = response.content[0].text
-    const jsonMatch = raw.match(/\[.*\]/s)
-    if (!jsonMatch) throw new Error('Invalid JSON format from AI')
-    const parsed = JSON.parse(jsonMatch[0])
+    
 
     const populatedResult = await Promise.all(parsed.map(async (r) => {
       const internship = await Internship.findById(r.internshipId).populate('companyId', 'companyName logoUrl location')

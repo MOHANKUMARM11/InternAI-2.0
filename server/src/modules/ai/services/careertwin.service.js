@@ -2,7 +2,7 @@ import { TwinConversation } from '../models/twinConversation.model.js'
 import { Application } from '../../application/application.model.js'
 import { Student } from '../../student/student.model.js'
 import { Company } from '../../company/company.model.js'
-import { claudeClient } from '../../../utils/claudeClient.js'
+import { generateContent } from '../../../utils/geminiClient.js'
 import { ApiError } from '../../../utils/ApiError.js'
 
 export const chatWithTwin = async (companyUserId, applicationId, message, history = []) => {
@@ -44,7 +44,7 @@ Rules:
 - Do not reveal that you are an AI unless directly asked
 `
 
-  const isMock = !process.env.ANTHROPIC_API_KEY || process.env.ANTHROPIC_API_KEY === 'dummy_key_for_testing'
+  const isMock = !process.env.GEMINI_API_KEY || process.env.GEMINI_API_KEY === 'dummy_key_for_testing'
   let replyText = ''
 
   if (isMock) {
@@ -57,13 +57,8 @@ Rules:
     const messages = [...formattedHistory.slice(-8), { role: 'user', content: message }]
 
     try {
-      const response = await claudeClient.messages.create({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 300,
-        system: systemPrompt,
-        messages
-      })
-      replyText = response.content[0].text
+      const prompt = history.map(h => `${h.role}: ${h.content}`).join('\\n') + `\\nuser: ${message}`;
+      replyText = await generateContent(prompt, { systemInstruction: systemPrompt, json: false });
     } catch (err) {
       throw new ApiError(500, 'Career Twin failed to respond')
     }
