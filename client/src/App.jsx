@@ -8,6 +8,10 @@ import StudentDashboard from './pages/student/StudentDashboard'
 import Profile from './pages/student/Profile'
 import CompanyDashboard from './pages/company/CompanyDashboard'
 import CompanyProfile from './pages/company/CompanyProfile'
+import PostInternship from './pages/company/PostInternship'
+import ManageInternships from './pages/company/ManageInternships'
+import InternshipList from './pages/student/InternshipList'
+import InternshipDetail from './pages/student/InternshipDetail'
 
 const Dashboard = () => {
   const { user, logout } = useAuthStore()
@@ -35,12 +39,17 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         
+        <Route path="/internships" element={<InternshipList />} />
+        <Route path="/internships/:id" element={<InternshipDetail />} />
+
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/student/dashboard" element={<StudentDashboard />} />
           <Route path="/student/profile" element={<Profile />} />
           <Route path="/company/dashboard" element={<CompanyDashboard />} />
           <Route path="/company/profile" element={<CompanyProfile />} />
+          <Route path="/company/internships" element={<ManageInternships />} />
+          <Route path="/company/internships/new" element={<PostInternship />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/login" replace />} />
