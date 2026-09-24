@@ -1,39 +1,28 @@
-const { signupUser, loginUser } = require("./auth.service");
+import * as authService from './auth.service.js'
+import { ApiError } from '../../utils/ApiError.js'
 
-const {
-  successResponse,
-} = require("../../utils/apiResponse");
+export const signup = async (req, res, next) => {
+  try {
+    const result = await authService.signup(req.body)
+    res.status(201).json({ success: true, data: result })
+  } catch (error) {
+    next(error)
+  }
+}
 
-const catchAsync = require("../../utils/catchAsync");
+export const login = async (req, res, next) => {
+  try {
+    const result = await authService.login(req.body)
+    res.status(200).json({ success: true, data: result })
+  } catch (error) {
+    next(error)
+  }
+}
 
-const STATUS_CODES = require("../../constants/statusCodes");
-const MESSAGES = require("../../constants/messages");
-
-// Signup
-const signup = catchAsync(async (req, res) => {
-  const user = await signupUser(req.body);
-
-  return successResponse(
-    res,
-    STATUS_CODES.CREATED,
-    MESSAGES.USER_REGISTERED,
-    user
-  );
-});
-
-// Login
-const login = catchAsync(async (req, res) => {
-  const data = await loginUser(req.body);
-
-  return successResponse(
-    res,
-    STATUS_CODES.OK,
-    MESSAGES.LOGIN_SUCCESS,
-    data
-  );
-});
-
-module.exports = {
-  signup,
-  login,
-};
+export const getMe = async (req, res, next) => {
+  try {
+    res.status(200).json({ success: true, data: { user: req.user } })
+  } catch (error) {
+    next(error)
+  }
+}

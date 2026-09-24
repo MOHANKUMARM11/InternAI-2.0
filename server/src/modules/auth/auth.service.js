@@ -1,106 +1,29 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
+import { authRepo } from './auth.repository.js'
+import { studentRepo } from '../student/student.repository.js'
+import { companyRepo } from '../company/company.repository.js'
+import { ApiError } from '../../utils/ApiError.js'
+import { generateToken } from '../../utils/jwt.js'
 
-const User = require("../../models/User");
-const Student = require("../../models/Student");
-const Company = require("../../models/Company");
+export const signup = async ({ name, email, password, role }) => {
+  const exists = await authRepo.findByEmail(email)
+  if (exists) throw new ApiError(409, 'Email already registered')
 
-const ApiError = require("../../utils/ApiError");
-const STATUS_CODES = require("../../constants/statusCodes");
-const MESSAGES = require("../../constants/messages");
+  const user = await authRepo.create({ name, email, passwordHash: password, role })
 
-// Service function to sign up a new user
-const signupUser = async ({ name, email, password, role }) => {
-  const existingUser = await User.findOne({ email });
+  if (role === 'student') await studentRepo.create({ userId: user._id })
+  if (role === 'company') await companyRepo.create({ userId: user._id, companyName: name })
 
-  if (existingUser) {
-    throw new ApiError(
-      STATUS_CODES.CONFLICT,
-      MESSAGES.USER_EXISTS
-    );
-  }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  const user = await User.create({
-  name,
-  email,
-  password: hashedPassword,
-  role,
-});
-
-// Auto create student profile
-if (role === "student") {
-  await Student.create({
-    userId: user._id,
-  });
+  const token = generateToken(user)
+  return { token, user: { id: user._id, name, email, role } }
 }
 
-if (role === "company") {
-  await Company.create({
-    userId: user._id,
-  });
+export const login = async ({ email, password }) => {
+  const user = await authRepo.findByEmail(email)
+  if (!user) throw new ApiError(401, 'Invalid credentials')
+
+  const match = await user.comparePassword(password)
+  if (!match) throw new ApiError(401, 'Invalid credentials')
+
+  const token = generateToken(user)
+  return { token, user: { id: user._id, name: user.name, email, role: user.role } }
 }
-
-const userResponse = {
-  _id: user._id,
-  name: user.name,
-  email: user.email,
-  role: user.role,
-  createdAt: user.createdAt,
-};
-
-return userResponse;
-};
-
-
-// Service function to log in a user
-
-const loginUser = async ({ email, password }) => {
-  const user = await User.findOne({ email });
-
-  if (!user) {
-    throw new ApiError(
-      STATUS_CODES.UNAUTHORIZED,
-      MESSAGES.INVALID_CREDENTIALS
-    );
-  }
-
-  const isPasswordMatch = await bcrypt.compare(
-    password,
-    user.password
-  );
-
-  if (!isPasswordMatch) {
-    throw new Error("Invalid email or password");throw new ApiError(
-      STATUS_CODES.UNAUTHORIZED,
-      MESSAGES.INVALID_CREDENTIALS
-    );
-  }
-
-  const token = jwt.sign(
-    {
-      id: user._id,
-      role: user.role,
-    },
-    process.env.JWT_SECRET,
-    {
-      expiresIn: "1d",
-    }
-  );
-
-  return {
-    token,
-    user: {
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-    },
-  };
-};
-
-module.exports = {
-  signupUser,
-  loginUser,
-};

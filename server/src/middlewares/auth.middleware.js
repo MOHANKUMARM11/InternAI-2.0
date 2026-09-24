@@ -1,42 +1,20 @@
-const jwt = require("jsonwebtoken");
-const User = require("../models/User");
+import { verifyToken } from '../utils/jwt.js'
+import { ApiError } from '../utils/ApiError.js'
 
-const authMiddleware = async (req, res, next) => {
+export const protect = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1]
+  if (!token) return next(new ApiError(401, 'No token provided'))
+
   try {
-    const authHeader = req.headers.authorization;
-
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({
-        success: false,
-        message: "Access denied. No token provided.",
-      });
-    }
-
-    const token = authHeader.split(" ")[1];
-
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET
-    );
-
-    const user = await User.findById(decoded.id).select("-password");
-
-    if (!user) {
-      return res.status(401).json({
-        success: false,
-        message: "User not found",
-      });
-    }
-
-    req.user = user;
-
-    next();
-  } catch (error) {
-    return res.status(401).json({
-      success: false,
-      message: "Invalid token",
-    });
+    req.user = verifyToken(token)
+    next()
+  } catch {
+    return next(new ApiError(401, 'Invalid or expired token'))
   }
-};
+}
 
-module.exports = authMiddleware;
+export const authorize = (...roles) => (req, res, next) => {
+  if (!roles.includes(req.user.role))
+    return next(new ApiError(403, 'Access denied'))
+  next()
+}

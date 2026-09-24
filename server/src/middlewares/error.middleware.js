@@ -1,13 +1,5 @@
-const STATUS_CODES = require("../constants/statusCodes");
-const MESSAGES = require("../constants/messages");
-
-const errorMiddleware = (err, req, res, next) => {
-  return res.status(
-    err.statusCode || STATUS_CODES.INTERNAL_SERVER_ERROR
-  ).json({
-    success: false,
-    message: err.message || MESSAGES.SERVER_ERROR,
-  });
-};
-
-module.exports = errorMiddleware;
+export const errorMiddleware = (err, req, res, next) => {
+  const statusCode = err.statusCode || 500
+  const message = err.isOperational ? err.message : 'Internal server error'
+  console.error(err); res.status(statusCode).json({ success: false, error: message })
+}
