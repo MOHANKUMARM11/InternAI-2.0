@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { useForm, useFieldArray } from 'react-hook-form'
 import { useStudentStore } from '../../store/studentStore'
-import { Upload, X, Plus } from 'lucide-react'
+import { Upload, X, Plus, Code } from 'lucide-react'
+import { githubApi } from '../../api/githubApi'
 
 const Profile = () => {
   const { profile, loading, fetchProfile, updateProfile, uploadResume } = useStudentStore()
   const [activeTab, setActiveTab] = useState(1)
   const [resumeFile, setResumeFile] = useState(null)
+  const [analyzingGithub, setAnalyzingGithub] = useState(false)
 
   const { register, control, handleSubmit, reset, watch, setValue } = useForm({
     defaultValues: {
@@ -59,6 +61,19 @@ const Profile = () => {
     await uploadResume(resumeFile)
     alert('Resume uploaded successfully!')
     setResumeFile(null)
+  }
+
+  const handleGithubAnalyze = async () => {
+    try {
+      setAnalyzingGithub(true)
+      await githubApi.analyze()
+      alert('GitHub profile analyzed successfully!')
+      fetchProfile() // refresh score
+    } catch (err) {
+      alert(err.response?.data?.error || 'Failed to analyze GitHub')
+    } finally {
+      setAnalyzingGithub(false)
+    }
   }
 
   const handleAddSkill = (e) => {
@@ -203,7 +218,17 @@ const Profile = () => {
             <div>
               <h3 className="font-semibold text-gray-700 mb-2">Portfolio Links</h3>
               <div className="space-y-3">
-                <input {...register('portfolioLinks.github')} placeholder="GitHub Profile URL" className="w-full border p-2 rounded text-sm" />
+                <div className="flex space-x-2">
+                  <input {...register('portfolioLinks.github')} placeholder="GitHub Profile URL" className="flex-1 border p-2 rounded text-sm" />
+                  <button 
+                    type="button" 
+                    onClick={handleGithubAnalyze}
+                    disabled={analyzingGithub || !watch('portfolioLinks.github')}
+                    className="bg-gray-800 text-white px-4 py-2 rounded flex items-center text-sm disabled:opacity-50"
+                  >
+                    <Code size={16} className="mr-2"/> {analyzingGithub ? 'Analyzing...' : 'Analyze GitHub'}
+                  </button>
+                </div>
                 <input {...register('portfolioLinks.linkedin')} placeholder="LinkedIn Profile URL" className="w-full border p-2 rounded text-sm" />
                 <input {...register('portfolioLinks.website')} placeholder="Personal Website URL" className="w-full border p-2 rounded text-sm" />
               </div>

@@ -94,6 +94,7 @@ const Applicants = () => {
               <tr>
                 <th className="p-4 font-semibold">Student Name</th>
                 <th className="p-4 font-semibold">Match Score</th>
+                <th className="p-4 font-semibold">GitHub Score</th>
                 <th className="p-4 font-semibold">Applied Date</th>
                 <th className="p-4 font-semibold">Resume</th>
                 <th className="p-4 font-semibold">Status</th>
@@ -123,6 +124,15 @@ const Applicants = () => {
                       {app.aiMatchScore ? (
                         <span className={`font-bold ${app.aiMatchScore >= 80 ? 'text-green-600' : 'text-yellow-600'}`}>
                           {app.aiMatchScore}%
+                        </span>
+                      ) : (
+                        <span className="text-gray-400 text-sm">N/A</span>
+                      )}
+                    </td>
+                    <td className="p-4">
+                      {app.studentId?.githubScore ? (
+                        <span className="font-bold text-gray-700">
+                          {app.studentId.githubScore}/100
                         </span>
                       ) : (
                         <span className="text-gray-400 text-sm">N/A</span>
