@@ -21,6 +21,7 @@ import InterviewPrep from './pages/student/InterviewPrep'
 import CareerChatbot from './pages/student/CareerChatbot'
 import SkillGap from './pages/student/SkillGap'
 import PeerInterview from './pages/student/PeerInterview'
+import ProgressTracker from './pages/student/ProgressTracker'
 
 const Dashboard = () => {
   const { user, logout } = useAuthStore()
@@ -62,6 +63,7 @@ function App() {
           <Route path="/student/career-chatbot" element={<CareerChatbot />} />
           <Route path="/student/skill-gap" element={<SkillGap />} />
           <Route path="/student/peer" element={<PeerInterview />} />
+          <Route path="/student/progress" element={<ProgressTracker />} />
           <Route path="/company/dashboard" element={<CompanyDashboard />} />
           <Route path="/company/profile" element={<CompanyProfile />} />
           <Route path="/company/internships" element={<ManageInternships />} />
