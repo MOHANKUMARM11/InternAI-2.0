@@ -15,6 +15,7 @@ import githubRoutes from './modules/github/github.routes.js'
 import marketRoutes from './modules/market/market.routes.js'
 import peerRoutes from './modules/peer/peer.routes.js'
 import progressRoutes from './modules/progress/progress.routes.js'
+import blockchainRoutes from './modules/blockchain/blockchain.routes.js'
 
 const app = express()
 
@@ -37,6 +38,7 @@ app.use('/api/github', githubRoutes)
 app.use('/api/market', marketRoutes)
 app.use('/api/peer', peerRoutes)
 app.use('/api/progress', progressRoutes)
+app.use('/api/blockchain', blockchainRoutes)
 
 app.use(errorMiddleware)
 
