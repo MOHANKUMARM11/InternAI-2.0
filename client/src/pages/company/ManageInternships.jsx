@@ -89,6 +89,9 @@ const ManageInternships = () => {
                     </button>
                   </td>
                   <td className="p-4 text-right space-x-3">
+                    <Link to={`/company/internships/${intern._id}/applicants`} className="text-gray-400 hover:text-indigo-600" title="View Applicants">
+                      <Users size={18}/>
+                    </Link>
                     <button className="text-gray-400 hover:text-indigo-600" title="Edit (Coming soon)"><Edit size={18}/></button>
                     <button onClick={() => handleDelete(intern._id)} className="text-gray-400 hover:text-red-600" title="Delete"><Trash2 size={18}/></button>
                   </td>

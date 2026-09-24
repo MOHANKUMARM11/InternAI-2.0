@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { internshipApi } from '../../api/internshipApi'
+import { applicationApi } from '../../api/applicationApi'
+import { useAuthStore } from '../../store/useAuthStore'
 
 const InternshipDetail = () => {
   const { id } = useParams()
   const navigate = useNavigate()
+  const { user } = useAuthStore()
   const [internship, setInternship] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [applying, setApplying] = useState(false)
 
   useEffect(() => {
     internshipApi.getInternshipById(id)
@@ -18,9 +22,27 @@ const InternshipDetail = () => {
       .finally(() => setLoading(false))
   }, [id, navigate])
 
-  const handleApply = () => {
-    // We will implement Application in Module 5
-    alert('Apply functionality will be implemented in Module 5')
+  const handleApply = async () => {
+    if (!user) {
+      alert('Please login to apply')
+      navigate('/login')
+      return
+    }
+    if (user.role !== 'student') {
+      alert('Only students can apply to internships')
+      return
+    }
+    
+    setApplying(true)
+    try {
+      await applicationApi.applyToInternship({ internshipId: id })
+      alert('Applied successfully!')
+      navigate('/student/applications')
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to apply')
+    } finally {
+      setApplying(false)
+    }
   }
 
   if (loading) return <div className="p-12 text-center">Loading...</div>
@@ -43,8 +65,12 @@ const InternshipDetail = () => {
               <p className="text-lg text-indigo-600 font-medium">{internship.companyId?.companyName}</p>
             </div>
           </div>
-          <button onClick={handleApply} className="bg-indigo-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-indigo-700 transition">
-            Apply Now
+          <button 
+            onClick={handleApply} 
+            disabled={applying}
+            className="bg-indigo-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-indigo-700 transition disabled:opacity-50"
+          >
+            {applying ? 'Applying...' : 'Apply Now'}
           </button>
         </div>
 
