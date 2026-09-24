@@ -6,6 +6,7 @@ import { errorMiddleware } from './middlewares/error.middleware.js'
 
 import authRoutes from './modules/auth/auth.routes.js'
 import studentRoutes from './modules/student/student.routes.js'
+import companyRoutes from './modules/company/company.routes.js'
 
 const app = express()
 
@@ -19,6 +20,7 @@ app.use('/api/', limiter)
 
 app.use('/api/auth', authRoutes)
 app.use('/api/students', studentRoutes)
+app.use('/api/companies', companyRoutes)
 
 app.use(errorMiddleware)
 
