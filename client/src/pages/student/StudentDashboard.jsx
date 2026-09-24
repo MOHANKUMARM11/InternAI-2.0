@@ -97,6 +97,28 @@ const StudentDashboard = () => {
 
         {/* Right Column */}
         <div className="space-y-6">
+          {/* AI Tools Quick Links */}
+          <div className="bg-white p-6 rounded-xl shadow-sm border">
+            <h2 className="text-lg font-bold text-gray-800 mb-4">AI Tools</h2>
+            <div className="flex flex-col space-y-3">
+              <Link to="/student/recommendations" className="text-indigo-600 font-medium hover:underline flex items-center">
+                <ChevronRight size={16} className="mr-1" /> AI Recommendations
+              </Link>
+              <Link to="/student/interview-prep" className="text-indigo-600 font-medium hover:underline flex items-center">
+                <ChevronRight size={16} className="mr-1" /> Interview Prep
+              </Link>
+              <Link to="/student/career-chatbot" className="text-indigo-600 font-medium hover:underline flex items-center">
+                <ChevronRight size={16} className="mr-1" /> Career Chatbot
+              </Link>
+              <Link to="/student/skill-gap" className="text-indigo-600 font-medium hover:underline flex items-center">
+                <ChevronRight size={16} className="mr-1" /> Skill Gap Analysis
+              </Link>
+              <Link to="/student/resume-analyzer" className="text-indigo-600 font-medium hover:underline flex items-center">
+                <ChevronRight size={16} className="mr-1" /> Resume Analyzer
+              </Link>
+            </div>
+          </div>
+
           {/* Recommendations */}
           <div className="bg-white p-6 rounded-xl shadow-sm border">
             <h2 className="text-lg font-bold text-gray-800 mb-4">Recommended for You</h2>
