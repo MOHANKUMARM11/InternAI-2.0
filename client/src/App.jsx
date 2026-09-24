@@ -4,6 +4,8 @@ import { Login } from './pages/Login'
 import { Register } from './pages/Register'
 import { ProtectedRoute } from './components/ProtectedRoute'
 import { useAuthStore } from './store/useAuthStore'
+import StudentDashboard from './pages/student/StudentDashboard'
+import Profile from './pages/student/Profile'
 
 const Dashboard = () => {
   const { user, logout } = useAuthStore()
@@ -33,6 +35,8 @@ function App() {
         
         <Route element={<ProtectedRoute />}>
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/student/dashboard" element={<StudentDashboard />} />
+          <Route path="/student/profile" element={<Profile />} />
         </Route>
 
         <Route path="*" element={<Navigate to="/login" replace />} />
